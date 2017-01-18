@@ -59,11 +59,14 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/jenkins"
 	machine.vm.provision "shell", inline: "sudo chmod 777 /data/jenkins"
 	machine.vm.provision "shell", inline: "docker build -t myjenkins /vagrant/jenkins" 
-	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -p 8079:50000 -v /data/jenkins:/var/jenkins_home myjenkins"
+	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /data/jenkins:/var/jenkins_home myjenkins"
 	
 	#Swarm Visualizer starten
 	machine.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
 	machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
+	
+	#Portainer starten
+	machine.vm.provision "shell", inline: "docker run -d --name portainer --restart unless stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -p 8082:9000 portainer/portainer"
 	
 	#Docker Remote API nach aussen verfuegbar machen (ungesichert)
 	machine.vm.provision "shell", inline: "docker run --name remoteapi --restart unless-stopped -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api"
