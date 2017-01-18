@@ -66,7 +66,7 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
 	
 	#Portainer starten
-	machine.vm.provision "shell", inline: "docker run -d --name portainer --restart unless stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -p 8082:9000 portainer/portainer"
+	machine.vm.provision "shell", inline: "docker run -d --name portainer --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -p 8082:9000 portainer/portainer"
 	
 	#Docker Remote API nach aussen verfuegbar machen (ungesichert)
 	machine.vm.provision "shell", inline: "docker run --name remoteapi --restart unless-stopped -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api"
