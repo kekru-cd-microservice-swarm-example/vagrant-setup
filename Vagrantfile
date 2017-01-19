@@ -17,6 +17,9 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "sudo chmod 666 /etc/default/docker"
   config.vm.provision "shell", inline: "sudo echo 'DOCKER_OPTS=\"--insecure-registry manager1:5000\"' >> /etc/default/docker"
   config.vm.provision "shell", inline: "sudo service docker restart"
+
+  #Lokales Docker Socket fuer Container verfuegbar machen
+  machine.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
   
   #Alte Docker Container stoppen und loeschen
   config.vm.provision "shell", inline: "sh -c 'docker stop $(docker ps -aq) && docker rm $(docker ps -aq); true'"
@@ -65,7 +68,6 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision "shell", inline: "docker run --name redis --restart unless-stopped -d -p 6379:6379 -v /data/redis:/data redis:alpine redis-server --appendonly yes"
 	
 	#Swarm Visualizer starten
-	machine.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
 	machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
 	
 	#Portainer starten
@@ -122,6 +124,9 @@ Vagrant.configure(2) do |config|
 	#Join-Tokens abspeichern
 	machine.vm.provision "shell", inline: "docker swarm join-token -q manager > /vagrant/swarmtokens/prod-manager-token"
 	machine.vm.provision "shell", inline: "docker swarm join-token -q worker > /vagrant/swarmtokens/prod-worker-token"
+
+	#Swarm Visualizer starten
+    machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
 	
 	#Docker Remote API nach aussen verfuegbar machen (ungesichert)
 	machine.vm.provision "shell", inline: "docker run --name remoteapi --restart unless-stopped -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api"
