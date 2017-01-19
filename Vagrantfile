@@ -76,6 +76,9 @@ Vagrant.configure(2) do |config|
 	
 	#wait-Image erstellen, wird in den Jenkinsfiles genutzt
 	machine.vm.provision "shell", inline: "docker build -t wait /vagrant/waitnetwork" 
+	
+	#ELK Stack als Docker Stack starten
+	machine.vm.provision "shell", inline: "docker stack deploy --compose-file /vagrant/ELK-stack/elk-setup.stack.yml ELK"
   end
 
   config.vm.define "worker1" do |machine|
@@ -122,6 +125,9 @@ Vagrant.configure(2) do |config|
 	
 	#Docker Remote API nach aussen verfuegbar machen (ungesichert)
 	machine.vm.provision "shell", inline: "docker run --name remoteapi --restart unless-stopped -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api"
+	
+	#ELK Stack als Docker Stack starten
+	machine.vm.provision "shell", inline: "docker stack deploy --compose-file /vagrant/ELK-stack/elk-setup.stack.yml ELK"
   end
   
   config.vm.define "prodworker1" do |machine|
