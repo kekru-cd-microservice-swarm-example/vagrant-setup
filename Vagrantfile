@@ -111,11 +111,6 @@ Vagrant.configure(2) do |config|
   
   #Erstelle Produktivumgebung
   config.vm.define "prodmanager1" do |machine|
-    #Der Prod-Manager erhaelt 1GB RAM
-    machine.vm.provider :virtualbox do |p|
-		p.customize ["modifyvm", :id, "--memory", 1024]
-	end
-	
 	#IP und DNS Name setzen
     machine.vm.hostname = "prodmanager1"
 	machine.vm.network "private_network", ip: "10.1.6.213"
