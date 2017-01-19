@@ -26,7 +26,7 @@ Vagrant.configure(2) do |config|
   #Zeitzone auf Europe/Berlin setzen
   config.vm.provision "shell", inline: "echo 'Europe/Berlin' > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata"
   #Shared-Folder erzeugen, auf den alle VMs Zugriff haben. Hier werden die Docker Swarm Join-Tokens hinterlegt
-  config.vm.provision "shell", inline: "mkdir --parents /vagrant/swarmtokens"
+  config.vm.provision "shell", inline: "mkdir --parents /vagrant/vm-data/swarmtokens"
   
   #Die VMs erhalten jeweils 2GB RAM
   config.vm.provider :virtualbox do |p|
@@ -51,8 +51,8 @@ Vagrant.configure(2) do |config|
 	#Swarm fuer Testumgebung erstellen
 	machine.vm.provision "shell", inline: "sh -c 'docker swarm init --advertise-addr 10.1.6.210; true'"
 	#Join-Tokens abspeichern
-	machine.vm.provision "shell", inline: "docker swarm join-token -q manager > /vagrant/swarmtokens/test-manager-token"
-	machine.vm.provision "shell", inline: "docker swarm join-token -q worker > /vagrant/swarmtokens/test-worker-token"
+	machine.vm.provision "shell", inline: "docker swarm join-token -q manager > /vagrant/vm-data/swarmtokens/test-manager-token"
+	machine.vm.provision "shell", inline: "docker swarm join-token -q worker > /vagrant/vm-data/swarmtokens/test-worker-token"
 	
 	#Registry starten
 	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/registry"
@@ -90,7 +90,7 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision :hosts, :sync_hosts => true
 	
 	#Testumgebungs-Swarm als Worker beitreten. Der Swarm Manager hat den Join Token in einer Datei hinterlegt
-	machine.vm.provision "shell", inline: "sh -c 'docker swarm join --token $(cat /vagrant/swarmtokens/test-worker-token) 10.1.6.210:2377; true'"
+	machine.vm.provision "shell", inline: "sh -c 'docker swarm join --token $(cat /vagrant/vm-data/swarmtokens/test-worker-token) 10.1.6.210:2377; true'"
   end
   
   config.vm.define "worker2" do |machine|
@@ -100,7 +100,7 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision :hosts, :sync_hosts => true
 	
 	#Testumgebungs-Swarm als Worker beitreten. Der Swarm Manager hat den Join Token in einer Datei hinterlegt
-	machine.vm.provision "shell", inline: "sh -c 'docker swarm join --token $(cat /vagrant/swarmtokens/test-worker-token) 10.1.6.210:2377; true'"
+	machine.vm.provision "shell", inline: "sh -c 'docker swarm join --token $(cat /vagrant/vm-data/swarmtokens/test-worker-token) 10.1.6.210:2377; true'"
   end
   
   
@@ -122,8 +122,8 @@ Vagrant.configure(2) do |config|
 	#Produktiv Swarm erstellen
 	machine.vm.provision "shell", inline: "sh -c 'docker swarm init --advertise-addr 10.1.6.213; true'"
 	#Join-Tokens abspeichern
-	machine.vm.provision "shell", inline: "docker swarm join-token -q manager > /vagrant/swarmtokens/prod-manager-token"
-	machine.vm.provision "shell", inline: "docker swarm join-token -q worker > /vagrant/swarmtokens/prod-worker-token"
+	machine.vm.provision "shell", inline: "docker swarm join-token -q manager > /vagrant/vm-data/swarmtokens/prod-manager-token"
+	machine.vm.provision "shell", inline: "docker swarm join-token -q worker > /vagrant/vm-data/swarmtokens/prod-worker-token"
 
 	#Swarm Visualizer starten
     machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
@@ -147,7 +147,7 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision :hosts, :sync_hosts => true
 	
 	#Dem Produktiv Swarm als Worker beitreten. Der Swarm Manager hat den Join Token in einer Datei hinterlegt
-	machine.vm.provision "shell", inline: "sh -c 'docker swarm join --token $(cat /vagrant/swarmtokens/prod-worker-token) 10.1.6.213:2377; true'"
+	machine.vm.provision "shell", inline: "sh -c 'docker swarm join --token $(cat /vagrant/vm-data/swarmtokens/prod-worker-token) 10.1.6.213:2377; true'"
   end
 
 end
