@@ -61,6 +61,9 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision "shell", inline: "docker build -t myjenkins /vagrant/jenkins" 
 	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /data/jenkins:/var/jenkins_home myjenkins"
 	
+	#redis starten zum Speichern, welche Microservice-Versionen gerade im Produktivsystem sind
+	machine.vm.provision "shell", inline: "docker run --name redis --restart unless-stopped -d -p 6379:6379 -v /data/redis:/data redis:alpine redis-server --appendonly yes"
+	
 	#Swarm Visualizer starten
 	machine.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
 	machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
