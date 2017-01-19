@@ -19,7 +19,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "sudo service docker restart"
 
   #Lokales Docker Socket fuer Container verfuegbar machen
-  machine.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
+  config.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
   
   #Alte Docker Container stoppen und loeschen
   config.vm.provision "shell", inline: "sh -c 'docker stop $(docker ps -aq) && docker rm $(docker ps -aq); true'"
