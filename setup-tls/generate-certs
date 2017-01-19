@@ -1,0 +1,46 @@
+#!/bin/bash
+#Siehe auch https://docs.docker.com/engine/security/https/
+
+SERVERNAME=$1
+SERVERIP=$2
+PASSWORD=$3
+
+if [[ -z $SERVERNAME ]]; then
+   echo "no servername as first parameter"
+   exit 1
+fi
+
+if [[ -z $SERVERIP ]]; then
+   echo "no serverip as second parameter"
+   exit 1
+fi
+
+if [[ -z $PASSWORD ]]; then
+   echo "no password as third parameter"
+   exit 1
+fi
+
+mkdir -p certs
+
+
+openssl genrsa -aes256 -passout pass:qwert -out certs/ca-key.pem 4096
+
+openssl req -passin pass:qwert -new -x509 -days 365 -key certs/ca-key.pem -sha256 -out certs/ca.pem -subj "/C=/ST=/L=/O=MyCompany/OU=IT/CN=DockerProd/emailAddress=test@example.de"
+
+openssl genrsa -out certs/server-key.pem 4096
+openssl req -subj "/CN=$SERVERNAME" -new -key certs/server-key.pem -out certs/server.csr
+
+echo "subjectAltName = DNS:$SERVERNAME,IP:$SERVERIP" > certs/extfile.cnf
+
+openssl x509 -passin pass:qwert -req -days 365 -in certs/server.csr -CA certs/ca.pem -CAkey certs/ca-key.pem -CAcreateserial -out certs/server-cert.pem -extfile certs/extfile.cnf
+
+#Client
+openssl genrsa -out certs/key.pem 4096
+openssl req -subj '/CN=client' -new -key certs/key.pem -out certs/client.csr
+echo "extendedKeyUsage = clientAuth" > certs/extfile.cnf
+openssl x509 -passin pass:qwert -req -days 365 -sha256 -in certs/client.csr -CA certs/ca.pem -CAkey certs/ca-key.pem -CAcreateserial -out certs/cert.pem -extfile certs/extfile.cnf
+
+rm -v certs/client.csr certs/server.csr
+
+chmod -v 0400 certs/ca-key.pem certs/key.pem certs/server-key.pem
+chmod -v 0444 certs/ca.pem certs/server-cert.pem certs/cert.pem
