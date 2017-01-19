@@ -4,6 +4,7 @@
 SERVERNAME=$1
 SERVERIP=$2
 PASSWORD=$3
+TARGETDIR=$4
 
 if [[ -z $SERVERNAME ]]; then
    echo "no servername as first parameter"
@@ -20,27 +21,32 @@ if [[ -z $PASSWORD ]]; then
    exit 1
 fi
 
-mkdir -p certs
+if [[ -z $TARGETDIR ]]; then
+   echo "no targetdir as fourth parameter"
+   exit 1
+fi
+
+mkdir -p $TARGETDIR
 
 
-openssl genrsa -aes256 -passout pass:qwert -out certs/ca-key.pem 4096
+openssl genrsa -aes256 -passout pass:$PASSWORD -out $TARGETDIR/ca-key.pem 4096
 
-openssl req -passin pass:qwert -new -x509 -days 365 -key certs/ca-key.pem -sha256 -out certs/ca.pem -subj "/C=/ST=/L=/O=MyCompany/OU=IT/CN=DockerProd/emailAddress=test@example.de"
+openssl req -passin pass:$PASSWORD -new -x509 -days 700 -key $TARGETDIR/ca-key.pem -sha256 -out $TARGETDIR/ca.pem -subj "/C=/ST=/L=/O=MyCompany/OU=IT/CN=DockerProd/emailAddress=test@example.de"
 
-openssl genrsa -out certs/server-key.pem 4096
-openssl req -subj "/CN=$SERVERNAME" -new -key certs/server-key.pem -out certs/server.csr
+openssl genrsa -out $TARGETDIR/server-key.pem 4096
+openssl req -subj "/CN=$SERVERNAME" -new -key $TARGETDIR/server-key.pem -out $TARGETDIR/server.csr
 
-echo "subjectAltName = DNS:$SERVERNAME,IP:$SERVERIP" > certs/extfile.cnf
+echo "subjectAltName = DNS:$SERVERNAME,IP:$SERVERIP" > $TARGETDIR/extfile.cnf
 
-openssl x509 -passin pass:qwert -req -days 365 -in certs/server.csr -CA certs/ca.pem -CAkey certs/ca-key.pem -CAcreateserial -out certs/server-cert.pem -extfile certs/extfile.cnf
+openssl x509 -passin pass:$PASSWORD -req -days 700 -in $TARGETDIR/server.csr -CA $TARGETDIR/ca.pem -CAkey $TARGETDIR/ca-key.pem -CAcreateserial -out $TARGETDIR/server-cert.pem -extfile $TARGETDIR/extfile.cnf
 
 #Client
-openssl genrsa -out certs/key.pem 4096
-openssl req -subj '/CN=client' -new -key certs/key.pem -out certs/client.csr
-echo "extendedKeyUsage = clientAuth" > certs/extfile.cnf
-openssl x509 -passin pass:qwert -req -days 365 -sha256 -in certs/client.csr -CA certs/ca.pem -CAkey certs/ca-key.pem -CAcreateserial -out certs/cert.pem -extfile certs/extfile.cnf
+openssl genrsa -out $TARGETDIR/client-key.pem 4096
+openssl req -subj '/CN=client' -new -key $TARGETDIR/client-key.pem -out $TARGETDIR/client.csr
+echo "extendedKeyUsage = clientAuth" > $TARGETDIR/extfile.cnf
+openssl x509 -passin pass:$PASSWORD -req -days 365 -sha256 -in $TARGETDIR/client.csr -CA $TARGETDIR/ca.pem -CAkey $TARGETDIR/ca-key.pem -CAcreateserial -out $TARGETDIR/client-cert.pem -extfile $TARGETDIR/extfile.cnf
 
-rm -v certs/client.csr certs/server.csr
+rm -v $TARGETDIR/client.csr $TARGETDIR/server.csr $TARGETDIR/extfile.cnf
 
-chmod -v 0400 certs/ca-key.pem certs/key.pem certs/server-key.pem
-chmod -v 0444 certs/ca.pem certs/server-cert.pem certs/cert.pem
+chmod -v 0400 $TARGETDIR/ca-key.pem $TARGETDIR/client-key.pem $TARGETDIR/server-key.pem
+chmod -v 0444 $TARGETDIR/ca.pem $TARGETDIR/server-cert.pem $TARGETDIR/client-cert.pem
