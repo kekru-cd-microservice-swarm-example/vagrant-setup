@@ -27,6 +27,8 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "echo 'Europe/Berlin' > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata"
   #Shared-Folder erzeugen, auf den alle VMs Zugriff haben. Hier werden die Docker Swarm Join-Tokens hinterlegt
   config.vm.provision "shell", inline: "mkdir --parents /vagrant/vm-data/swarmtokens"
+
+  config.vm.provision "shell", inline: "mkdir --parents /vagrant/vm-data/certs-prod/"
   
   #Die VMs erhalten jeweils 2GB RAM
   config.vm.provider :virtualbox do |p|
@@ -128,8 +130,10 @@ Vagrant.configure(2) do |config|
 	#Swarm Visualizer starten
     machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
 	
-	#Docker Remote API nach aussen verfuegbar machen (ungesichert)
-	machine.vm.provision "shell", inline: "docker run --name remoteapi --restart unless-stopped -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api"
+	#Docker Remote API nach aussen verfuegbar machen (TLS gesichert)
+	machine.vm.provision "shell", inline: "/vagrant/setup-ls/generate-certs prodmanager1 10.1.6.213 geheim123 /vagrant/vm-data/certs-prod"
+	machine.vm.provision "shell", inline: "mv /vagrant/vm-data/certs-prod/ca.pem /vagrant/vm-data/certs-prod/ca-cert.pem"
+	machine.vm.provision "shell", inline: "docker run --name remote-api-tls --restart unless-stopped -d -p 2376:443 -v /vagrant/vm-data/certs-prod:/data/certs:ro -v /var/run/docker.sock:/var/run/docker.sock:ro whiledo/docker-remote-api-tls"
 	
 	#ELK Stack als Docker Stack starten
 	machine.vm.provision "shell", inline: "docker stack deploy --compose-file /vagrant/ELK-stack/elk-setup.stack.yml ELK"
