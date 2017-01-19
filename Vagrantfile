@@ -64,7 +64,7 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/jenkins"
 	machine.vm.provision "shell", inline: "sudo chmod 777 /data/jenkins"
 	machine.vm.provision "shell", inline: "docker build -t myjenkins /vagrant/jenkins" 
-	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /data/jenkins:/var/jenkins_home myjenkins"
+	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /data/jenkins:/var/jenkins_home --add-host manager1:10.1.6.210 --add-host prodmanager1:10.1.6.210 myjenkins"
 	
 	#redis starten zum Speichern, welche Microservice-Versionen gerade im Produktivsystem sind
 	machine.vm.provision "shell", inline: "docker run --name redis --restart unless-stopped -d -p 6379:6379 -v /data/redis:/data redis:alpine redis-server --appendonly yes"
@@ -126,7 +126,7 @@ Vagrant.configure(2) do |config|
     machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
 	
 	#Docker Remote API nach aussen verfuegbar machen (TLS gesichert)
-	machine.vm.provision "shell", inline: "/vagrant/setup-ls/generate-certs prodmanager1 10.1.6.213 geheim123 /vagrant/vm-data/certs-prod"
+	machine.vm.provision "shell", inline: "/vagrant/setup-tls/generate-certs prodmanager1 10.1.6.213 geheim123 /vagrant/vm-data/certs-prod"
 	machine.vm.provision "shell", inline: "mv /vagrant/vm-data/certs-prod/ca.pem /vagrant/vm-data/certs-prod/ca-cert.pem"
 	machine.vm.provision "shell", inline: "docker run --name remote-api-tls --restart unless-stopped -d -p 2376:443 -v /vagrant/vm-data/certs-prod:/data/certs:ro -v /var/run/docker.sock:/var/run/docker.sock:ro whiledo/docker-remote-api-tls"
 	
