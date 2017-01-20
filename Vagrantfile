@@ -64,7 +64,7 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/jenkins"
 	machine.vm.provision "shell", inline: "sudo chmod 777 /data/jenkins"
 	machine.vm.provision "shell", inline: "docker build -t myjenkins /vagrant/jenkins" 
-	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /data/jenkins:/var/jenkins_home --add-host manager1:10.1.6.210 --add-host prodmanager1:10.1.6.210 myjenkins"
+	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /data/jenkins:/var/jenkins_home --add-host manager1:10.1.6.210 --add-host prodmanager1:10.1.6.213 myjenkins"
 	
 	#redis starten zum Speichern, welche Microservice-Versionen gerade im Produktivsystem sind
 	machine.vm.provision "shell", inline: "docker run --name redis --restart unless-stopped -d -p 6379:6379 -v /data/redis:/data redis:alpine redis-server --appendonly yes"
