@@ -57,17 +57,17 @@ Vagrant.configure(2) do |config|
 	machine.vm.provision "shell", inline: "docker swarm join-token -q worker > /vagrant/vm-data/swarmtokens/test-worker-token"
 	
 	#Registry starten
-	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/registry"
-	machine.vm.provision "shell", inline: "docker run --name registry --restart unless-stopped -d -p 5000:5000 -v /data/registry:/var/lib/registry registry"
+	machine.vm.provision "shell", inline: "sudo mkdir --parents /vagrant/vm-data/data/registry"
+	machine.vm.provision "shell", inline: "docker run --name registry --restart unless-stopped -d -p 5000:5000 -v /vagrant/vm-data/data/registry:/var/lib/registry registry"
 	
 	#Jenkins starten
-	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/jenkins"
-	machine.vm.provision "shell", inline: "sudo chmod 777 /data/jenkins"
+	machine.vm.provision "shell", inline: "sudo mkdir --parents /vagrant/vm-data/data/jenkins"
+	machine.vm.provision "shell", inline: "sudo chmod 777 /vagrant/vm-data/data/jenkins"
 	machine.vm.provision "shell", inline: "docker build -t myjenkins /vagrant/jenkins" 
-	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /data/jenkins:/var/jenkins_home --add-host manager1:10.1.6.210 --add-host prodmanager1:10.1.6.213 myjenkins"
+	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /vagrant/vm-data/data/jenkins:/var/jenkins_home --add-host manager1:10.1.6.210 --add-host prodmanager1:10.1.6.213 myjenkins"
 	
 	#redis starten zum Speichern, welche Microservice-Versionen gerade im Produktivsystem sind
-	machine.vm.provision "shell", inline: "docker run --name redis --restart unless-stopped -d -p 6379:6379 -v /data/redis:/data redis:alpine redis-server --appendonly yes"
+	machine.vm.provision "shell", inline: "docker run --name redis --restart unless-stopped -d -p 6379:6379 -v /vagrant/vm-data/data/redis:/data redis:alpine redis-server --appendonly yes"
 	
 	#Swarm Visualizer starten
 	machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
