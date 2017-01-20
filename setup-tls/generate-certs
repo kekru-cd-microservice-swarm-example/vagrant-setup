@@ -48,5 +48,6 @@ openssl x509 -passin pass:$PASSWORD -req -days 365 -sha256 -in $TARGETDIR/client
 
 rm -v $TARGETDIR/client.csr $TARGETDIR/server.csr $TARGETDIR/extfile.cnf
 
+cp $TARGETDIR/ca.pem $TARGETDIR/ca-cert.pem
 chmod -v 0400 $TARGETDIR/ca-key.pem $TARGETDIR/client-key.pem $TARGETDIR/server-key.pem
-chmod -v 0444 $TARGETDIR/ca.pem $TARGETDIR/server-cert.pem $TARGETDIR/client-cert.pem
+chmod -v 0444 $TARGETDIR/ca.pem $TARGETDIR/ca-cert.pem $TARGETDIR/server-cert.pem $TARGETDIR/client-cert.pem

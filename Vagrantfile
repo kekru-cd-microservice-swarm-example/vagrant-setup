@@ -127,7 +127,6 @@ Vagrant.configure(2) do |config|
 	
 	#Docker Remote API nach aussen verfuegbar machen (TLS gesichert)
 	machine.vm.provision "shell", inline: "/vagrant/setup-tls/generate-certs prodmanager1 10.1.6.213 geheim123 /vagrant/vm-data/certs-prod"
-	machine.vm.provision "shell", inline: "mv /vagrant/vm-data/certs-prod/ca.pem /vagrant/vm-data/certs-prod/ca-cert.pem"
 	machine.vm.provision "shell", inline: "docker run --name remote-api-tls --restart unless-stopped -d -p 2376:443 -v /vagrant/vm-data/certs-prod:/data/certs:ro -v /var/run/docker.sock:/var/run/docker.sock:ro whiledo/docker-remote-api-tls"
 	
 	#ELK Stack als Docker Stack starten
