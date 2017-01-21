@@ -1,0 +1,10 @@
+#!/bin/bash
+cd /home/vagrant
+git clone https://github.com/kekru-cd-microservice-swarm-example/jenkins-shared.git
+
+DEPLOYSTACKSCRIPT=/home/vagrant/jenkins-shared/resources/deploy-stack
+
+sed -i "s|./docker|docker|g" $DEPLOYSTACKSCRIPT
+chmod +x $DEPLOYSTACKSCRIPT
+
+$DEPLOYSTACKSCRIPT /home/vagrant/jenkins-shared/resources/base-setup.stack.yml prod initial
