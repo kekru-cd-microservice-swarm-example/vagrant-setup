@@ -10,7 +10,7 @@ Vagrant.configure(2) do |config|
   #config.ssh.password = "vagrant"
   
   #Docker installieren, wenn noch nicht installiert
-  config.vm.provision "shell", inline: "command -v docker >/dev/null 2>&1 || curl -fsSL https://test.docker.com/ | sh"
+  config.vm.provision "shell", inline: "command -v docker >/dev/null 2>&1 || curl -fsSL https://get.docker.com/ | sh"
   config.vm.provision "shell", inline: "sudo usermod -aG docker vagrant"
   
   #Registry auf manager1:5000 zulassen
