@@ -1,6 +1,6 @@
 Vagrant.configure(2) do |config|
   
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "gbarbieru/xenial"
   
   config.vm.hostname = "manager1"
   
@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
   
   #Registry auf manager1:5000 zulassen
   config.vm.provision "shell", inline: "sudo chmod 666 /etc/default/docker"
-  config.vm.provision "shell", inline: "sudo echo 'DOCKER_OPTS=\"--insecure-registry manager1:5000\"' >> /etc/default/docker"
+  config.vm.provision "shell", inline: "sudo echo '{\"insecure-registries\": [ \"manager1:5000\" ]}' > /etc/docker/daemon.json"
   config.vm.provision "shell", inline: "sudo service docker restart"
 
   #Lokales Docker Socket fuer Container verfuegbar machen
@@ -131,6 +131,9 @@ Vagrant.configure(2) do |config|
 	
 	#ELK Stack als Docker Stack starten
 	machine.vm.provision "shell", inline: "docker stack deploy --compose-file /vagrant/ELK-stack/elk-setup.stack.yml ELK"
+
+    #Initial leere Services starten
+	machine.vm.provision "shell", inline: "/vagrant/runInitialServiceStack"
   end
   
   config.vm.define "prodworker1" do |machine|
