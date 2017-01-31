@@ -18,7 +18,7 @@ Der erste Start wird 10 bis 15 Minuten dauert. Es werden die VMs manager1, worke
 
 ## Vagrant Kommandos
 + `vagrant suspend`: Sichert den aktuellen Zustand der VMs und stoppt sie.
-+ `vagrant stop`: Fährt die VMs herunter
++ `vagrant halt`: Fährt die VMs herunter
 + `vagrant destroy`: Löscht die VMs komplett.
 + `vagrant provision`: Aktualisiert die Installationen innerhalb der VMs
 + `vagrant reload`: Aktualisiert die Konfiguration der VMs
