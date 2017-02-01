@@ -1,7 +1,9 @@
 //Template fuer einen Microservice "Exampleservice"
+//Import der Shared Library, um weitere Funktionen nutzen zu koennen
 @Library('github.com/kekru-cd-microservice-swarm-example/jenkins-shared@master')
 import steps.CDMain
 
+//Variablen deklarieren
 def cdMain
 def exampleservicePort
 def exampleserviceImageName
@@ -10,6 +12,7 @@ def stack
 
 try{
     node {
+        //Git Repo laden und Shared Library initiieren
         stage('Preparation') {
             git 'https://github.com/kekru-cd-microservice-swarm-example/exampleservice'
 
@@ -18,27 +21,35 @@ try{
         }
 
         stage('Build') {
-		    sh './builAndUnittests'
-            exampleserviceImageName = cdMain.buildAndPush('exampleservice')
+            //Compile, UnitTests und Artifakte generieren, z.B. mit mvn package
+            sh './mvnw package'
+            //Docker Image erzeugen und in die Docker Registry pushen. Rueckgabe ist vollstaendiger Name des Image
+            exampleserviceImageName = cdMain.buildAndPush('exampleservice', './pfad/zu/Dockerfile')
         }
 
         stage('Starte Testumgebung') {
+            //start der Testumgebung
             stack = cdMain.startTestenvironment()
-            sh './docker service update --replicas 1 --image ' + commentsserviceImageName + ' ' + stack.fullServiceName('exampleservice')
+            //Aktualisierung des Exampleservice
+            sh './docker service update --replicas 1 --image ' + exampleserviceImageName + ' ' + stack.fullServiceName('exampleservice')
 
+            //Port des Reverse-Proxy ermitteln
             borderproxyPort = stack.getBorderproxyPort()
+            //Port des Exampleservice ermitteln
             exampleservicePort = stack.getPublishedPort('exampleservice', 8080)
-            echo '8080 -> ' + exampleservice
-            cdMain.waitForTCP(exampleservice)
-       }
-	   
-	   stage('Integrationtests') {
-            sh './runIntegrationtests host=manager1 port=' + exampleservicePort            
-       }
+            echo '8080 -> ' + exampleservicePort
+            //Warten bis Exampleservice bereit ist
+            cdMain.waitForTCP(exampleservicePort)
+        }
+       
+        stage('Integrationtests') {
+            //Integrationstests starten, z.B. mit Maven
+            sh './mvnw test-compile surefire:test@run-intagrationtests -Dhost=manager1 -Dport=' + exampleservicePort            
+        }
     }
 
-
     stage ('Manuelle Tests'){
+        //Auf Nutzereingabe warten nach den manuellen Tests
         def userInput = input(
             id: 'userInput', message: 'Testversion erreichbar unter http://10.1.6.210:'+borderproxyPort+'/newspage/ Live Deployment?'
         )
@@ -48,6 +59,7 @@ try{
 }finally{    
     node {
         stage ('Entferne Testumgebung'){
+            Nach den manuellen Tests wird die Testumgebung entfernt
             stack.removeStack()
         }
     }
@@ -55,6 +67,7 @@ try{
 
 node {
     stage ('Live Deployment'){
-        cdMain.deployInProduction('commentsservice', exampleserviceImageName)
+        //Wurde die Pipeline nicht durch die Benutzereingabe abgebrochen, wird die neue Version auf dem Produktivsystem deployt
+        cdMain.deployInProduction('exampleservice', exampleserviceImageName)
     }
 }
