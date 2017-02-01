@@ -1,0 +1,60 @@
+//Template fuer einen Microservice "Exampleservice"
+@Library('github.com/kekru-cd-microservice-swarm-example/jenkins-shared@master')
+import steps.CDMain
+
+def cdMain
+def exampleservicePort
+def exampleserviceImageName
+def borderproxyPort
+def stack
+
+try{
+    node {
+        stage('Preparation') {
+            git 'https://github.com/kekru-cd-microservice-swarm-example/exampleservice'
+
+            cdMain = new CDMain(steps)
+            cdMain.init()
+        }
+
+        stage('Build') {
+		    sh './builAndUnittests'
+            exampleserviceImageName = cdMain.buildAndPush('exampleservice')
+        }
+
+        stage('Starte Testumgebung') {
+            stack = cdMain.startTestenvironment()
+            sh './docker service update --replicas 1 --image ' + commentsserviceImageName + ' ' + stack.fullServiceName('exampleservice')
+
+            borderproxyPort = stack.getBorderproxyPort()
+            exampleservicePort = stack.getPublishedPort('exampleservice', 8080)
+            echo '8080 -> ' + exampleservice
+            cdMain.waitForTCP(exampleservice)
+       }
+	   
+	   stage('Integrationtests') {
+            sh './runIntegrationtests host=manager1 port=' + exampleservicePort            
+       }
+    }
+
+
+    stage ('Manuelle Tests'){
+        def userInput = input(
+            id: 'userInput', message: 'Testversion erreichbar unter http://10.1.6.210:'+borderproxyPort+'/newspage/ Live Deployment?'
+        )
+
+    }
+
+}finally{    
+    node {
+        stage ('Entferne Testumgebung'){
+            stack.removeStack()
+        }
+    }
+}
+
+node {
+    stage ('Live Deployment'){
+        cdMain.deployInProduction('commentsservice', exampleserviceImageName)
+    }
+}
