@@ -59,7 +59,7 @@ try{
 }finally{    
     node {
         stage ('Entferne Testumgebung'){
-            Nach den manuellen Tests wird die Testumgebung entfernt
+            //Nach den manuellen Tests wird die Testumgebung entfernt
             stack.removeStack()
         }
     }
