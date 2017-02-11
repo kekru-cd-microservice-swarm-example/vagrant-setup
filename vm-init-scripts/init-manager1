@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#Swarm fuer Testumgebung erstellen
+sh -c 'docker swarm init --advertise-addr 10.1.6.210; true'
+#Join-Tokens abspeichern
+docker swarm join-token -q manager > /vagrant/vm-data/swarmtokens/test-manager-token
+docker swarm join-token -q worker > /vagrant/vm-data/swarmtokens/test-worker-token
+
+#Registry starten
+sudo mkdir --parents /vagrant/vm-data/data/registry
+docker run --name registry --restart unless-stopped -d -p 5000:5000 -v /vagrant/vm-data/data/registry:/var/lib/registry registry
+
+#Jenkins starten
+sudo mkdir --parents /vagrant/vm-data/data/jenkins
+sudo chmod 777 /vagrant/vm-data/data/jenkins
+docker build -t myjenkins /vagrant/jenkins
+docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -v /vagrant/vm-data/data/jenkins:/var/jenkins_home --add-host manager1:10.1.6.210 --add-host prodmanager1:10.1.6.213 myjenkins
+
+#redis starten zum Speichern, welche Microservice-Versionen gerade im Produktivsystem sind
+docker run --name redis --restart unless-stopped -d -p 6379:6379 -v /vagrant/vm-data/data/redis:/data redis:alpine redis-server --appendonly yes
+
+#Swarm Visualizer starten
+docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer
+
+#Portainer starten
+docker run -d --name portainer --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -p 8082:9000 portainer/portainer
+
+#Docker Remote API nach aussen verfuegbar machen (ungesichert)
+docker run --name remoteapi --restart unless-stopped -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api
+
+#wait-Image erstellen, wird in den Jenkinsfiles genutzt
+docker build -t wait /vagrant/waitnetwork
+
+#ELK Stack als Docker Stack starten
+docker stack deploy --compose-file /vagrant/ELK-stack/elk-setup.stack.yml ELK
+
+#Selenium (Server und Browser) herunterladen und in der eigenen Registry speichern, damit es nicht von jedem Worker selber heruntergeladen wird (ist recht gross)
+docker pull whiledo/selenium-firefox-webvnc:latest
+docker tag whiledo/selenium-firefox-webvnc:latest manager1:5000/whiledo/selenium-firefox-webvnc:latest
+docker push manager1:5000/whiledo/selenium-firefox-webvnc:latest
+

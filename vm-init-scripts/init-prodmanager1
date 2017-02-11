@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#Produktiv Swarm erstellen
+sh -c 'docker swarm init --advertise-addr 10.1.6.213; true'
+#Join-Tokens abspeichern
+docker swarm join-token -q manager > /vagrant/vm-data/swarmtokens/prod-manager-token
+docker swarm join-token -q worker > /vagrant/vm-data/swarmtokens/prod-worker-token
+
+
+#Swarm Visualizer starten
+docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer
+
+
+#Docker Remote API nach aussen verfuegbar machen (TLS gesichert)
+mkdir --parents /vagrant/vm-data/certs-prod/
+/vagrant/vm-init-scripts/generate-certs prodmanager1 10.1.6.213 geheim123 /vagrant/vm-data/certs-prod
+docker run --name remote-api-tls --restart unless-stopped -d -p 2376:443 -v /vagrant/vm-data/certs-prod:/data/certs:ro -v /var/run/docker.sock:/var/run/docker.sock:ro whiledo/docker-remote-api-tls
+sudo chmod 666 /var/run/docker.sock
+
+#ELK Stack als Docker Stack starten
+docker stack deploy --compose-file /vagrant/ELK-stack/elk-setup.stack.yml ELK
+
+
+#Initial leere Services starten
+STACKSERVICES=$(docker stack services prod -q)
+if [[ $STACKSERVICES == *"Nothing"* ]]; then
+
+  echo "create initial prod stack"
+
+  cd /home/vagrant
+  git clone https://github.com/kekru-cd-microservice-swarm-example/jenkins-shared.git
+
+  DEPLOYSTACKSCRIPT=/home/vagrant/jenkins-shared/resources/deploy-stack
+
+  sed -i "s|./docker|docker|g" $DEPLOYSTACKSCRIPT
+  chmod +x $DEPLOYSTACKSCRIPT
+
+  $DEPLOYSTACKSCRIPT /home/vagrant/jenkins-shared/resources/base-setup.stack.yml prod initial
+
+else
+
+  echo "prod stack already exists"
+
+fi

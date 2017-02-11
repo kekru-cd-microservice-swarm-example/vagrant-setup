@@ -17,14 +17,22 @@ Führen Sie folgende Schritte durch:
 Der erste Start wird 10 bis 15 Minuten dauert. Es werden die VMs manager1, worker1, worker2, prodmanager1 und prodworker1 erstellt.
 
 ## Vagrant Kommandos
-+ `vagrant suspend`: Sichert den aktuellen Zustand der VMs und stoppt sie.
-+ `vagrant halt`: Fährt die VMs herunter
-+ `vagrant destroy`: Löscht die VMs komplett.
 + `vagrant provision`: Aktualisiert die Installationen innerhalb der VMs
 + `vagrant reload`: Aktualisiert die Konfiguration der VMs
 + `vagrant up`: Startet die VMs, nachdem Sie gestoppt, oder gelöscht wurden.
++ `vagrant suspend`: Sichert den aktuellen Zustand der VMs und stoppt sie.
++ `vagrant halt`: Fährt die VMs herunter
++ `vagrant destroy`: Löscht die VMs komplett.
 
 Jede Operation kann auch auf eine einzelne VM ausgeführt werden, z.B. `vagrant provision manager1` 
+
+## Troubleshooting  
++ `vagrant provision` erneuert die Installationen innerhalb der VMs. Das geht relativ schnell (ca. 2 Minuten) und reicht meistens aus.
++ `vagrant reload --provision` führt erst ein Reload der VMs durch, was u.a. die Netzwerkeinstellungen beinhaltet. Anschließend wird die installierte Software erneuert. (Dauer ca. 3 Minuten)
++ `vagrant destroy` löscht die VMs komplett. Das neu Aufsetzen mit `vagrant up` dauert relativ lange (Ca. 10 bis 15 Minuten).
+  
+Da die Nutzdaten von Jenkins, der Registry und Redis auf im Vagrant-Shared Folder liegen, in den VMs unter `/vagrant/vm-data`, auf dem Hostrechner im Verzeichnis `vmdata` neben dem `Vagrantfile`, gehen diese beim Neu erstellen der VMs nicht verloren.  
+Wenn Sie diese Daten entfernen möchten, löschen Sie das Verzeichnis `vmdata`, das sich neben dem `Vagrantfile` befindet.
 
 ## SSH Zugriff
 Mit `vagrant ssh manager1` wechseln Sie in eine SSH Session von manager1.  

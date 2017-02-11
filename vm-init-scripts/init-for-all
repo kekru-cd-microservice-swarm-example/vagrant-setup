@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#Docker installieren, wenn noch nicht installiert
+command -v docker >/dev/null 2>&1 || curl -fsSL https://get.docker.com/ | sh
+sudo usermod -aG docker vagrant
+
+#Bash Completion aktualisieren
+sudo apt-get update
+sudo apt-get install -y bash-completion
+
+#Registry auf manager1:5000 zulassen
+sudo chmod 666 /etc/default/docker
+sudo echo '{"insecure-registries": [ "manager1:5000" ]}' > /etc/docker/daemon.json
+sudo service docker restart
+
+#Lokales Docker Socket fuer Container verfuegbar machen
+sudo chmod 666 /var/run/docker.sock
+
+#Alte Docker Container stoppen und loeschen
+sh -c 'docker stop $(docker ps -aq) && docker rm $(docker ps -aq); true'
+#Zeitzone auf Europe/Berlin setzen
+echo 'Europe/Berlin' > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+
+#Shared-Folder erzeugen, auf den alle VMs Zugriff haben. Hier werden die Docker Swarm Join-Tokens hinterlegt
+mkdir --parents /vagrant/vm-data/swarmtokens
+
+
