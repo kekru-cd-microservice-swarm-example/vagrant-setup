@@ -8,9 +8,6 @@ sudo usermod -aG docker vagrant
 sudo apt-get update
 sudo apt-get install -y bash-completion
 
-#Bash JSON Parser installieren
-sudo apt-get install -y jq
-
 #Registry auf manager1:5000 zulassen
 sudo chmod 666 /etc/default/docker
 sudo echo '{"insecure-registries": [ "manager1:5000" ]}' > /etc/docker/daemon.json
