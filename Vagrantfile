@@ -7,8 +7,13 @@ Vagrant.configure(2) do |config|
   
   #config.ssh.password = "vagrant"
   
+  #Zeilenumbrueche in Scripten von CRLF zu LF konvertieren, falls Git for Windows CRLF genommen hat
+  config.vm.provision "shell", inline: "sudo chmod -R 777 /vagrant/vm-init-scripts"
+  config.vm.provision "shell", inline: "sudo apt-get update && sudo apt-get install -y dos2unix"
+  config.vm.provision "shell", inline: "dos2unix /vagrant/vm-init-scripts/*"
+  config.vm.provision "shell", inline: "dos2unix /vagrant/waitnetwork/*"
+    
   #Initiierungsscript fuer alle VMs, Docker instalieren, etc.
-  config.vm.provision "shell", inline: "sudo chmod -R 555 /vagrant/vm-init-scripts"
   config.vm.provision "shell", inline: "/vagrant/vm-init-scripts/init-for-all"
   
   #Die VMs erhalten jeweils 2GB RAM
