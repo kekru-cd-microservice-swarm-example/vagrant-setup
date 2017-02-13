@@ -45,7 +45,7 @@ Führen Sie zunächst die obenstehende Anleitung zur Installation durch. anschli
 Dazu gibts es zwei Möglichkeiten.  
 
 ## Benutzung der vorbereiteten Installation.
-+ Kopieren Sie `vm-data-jenkins-pipelines-konfiguriert.zip`, oder laden Sie die Datei von (https://whiledo.de/sonstiges/bachelorarbeit/vm-data-jenkins-pipelines-konfiguriert.zip)[https://whiledo.de/sonstiges/bachelorarbeit/vm-data-jenkins-pipelines-konfiguriert.zip] herunter. Der MD5 Hash der Datei ist `fdbc3bca0dd51e99ec22568235644cfe`.  
++ Kopieren Sie `vm-data-jenkins-pipelines-konfiguriert.zip`, oder laden Sie die Datei von [https://whiledo.de/sonstiges/bachelorarbeit/vm-data-jenkins-pipelines-konfiguriert.zip](https://whiledo.de/sonstiges/bachelorarbeit/vm-data-jenkins-pipelines-konfiguriert.zip) herunter. Der MD5 Hash der Datei ist `fdbc3bca0dd51e99ec22568235644cfe`.  
 + Entpacken Sie die Datei. Zum Packen wurde 7Zip auf maximaler Kompressionsstufe genutzt. Falls es Probleme beim Entpacken gibt, benutzen Sie bitte auch 7Zip zum Entpacken.  
 + Die Zip Datei enthält einen Ordner `vm-data`.  
 + Löschen Sie zunächst ihren Ordner `vm-data` aus ihrem Arbeitsverzeichnis (das Verzeichnis, wo das Vagrantfile liegt) und kopieren Sie `vm-data` aus der Zip-Datei in ihr Arbeitsverzeichnis.  
