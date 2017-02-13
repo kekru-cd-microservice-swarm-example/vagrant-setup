@@ -86,4 +86,3 @@ Zugangsdaten für Produktiv-Swarm hinzufügen
 + Wählen Sie anschließend `Proceed` im Jenkins-Log, oder in der Pipelinedarstellung
 + Sobald `newspage` das erste Mal erfolgreich durchlaufen ist, ist die Beispielanwendung im Produktivsystem über [http://10.1.6.213/newspage/](http://10.1.6.213/newspage/) erreichbar.
 + In der Navigationsleiste finden Sie zwei Links um Testdaten für Newspage und Commentsservice zu erzeugen.
-+ Die Produktivumgebung ist nach dem ersten Durchlauf von 
