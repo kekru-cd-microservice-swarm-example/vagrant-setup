@@ -31,7 +31,7 @@ Jede Operation kann auch auf eine einzelne VM ausgeführt werden, z.B. `vagrant 
 + `vagrant provision` erneuert die Installationen innerhalb der VMs. Das geht relativ schnell (ca. 2 Minuten) und reicht meistens aus.
 + `vagrant reload --provision` führt erst ein Reload der VMs durch, was u.a. die Netzwerkeinstellungen beinhaltet. Anschließend wird die installierte Software erneuert. (Dauer ca. 3 Minuten)
 + `vagrant destroy` löscht die VMs komplett. Das neu Aufsetzen mit `vagrant up` dauert relativ lange (Ca. 10 bis 15 Minuten).
-+ Falls Ihr Rechner nicht genügend Leistung aufweißt, können Sie einzelne Worker herunterfahren, z.B. mittels `vagrant halt worker1`.  
++ Falls Ihr Rechner nicht genügend Leistung aufweißt, können Sie einzelne Worker herunterfahren werden, z.B. mittels `vagrant halt worker1`.  
   
 Da die Nutzdaten von Jenkins, der Registry und Redis auf im Vagrant-Shared Folder liegen, in den VMs unter `/vagrant/vm-data`, auf dem Hostrechner im Verzeichnis `vmdata` neben dem `Vagrantfile`, gehen diese beim Neu erstellen der VMs nicht verloren.  
 Wenn Sie diese Daten entfernen möchten, löschen Sie das Verzeichnis `vmdata`, das sich neben dem `Vagrantfile` befindet.
