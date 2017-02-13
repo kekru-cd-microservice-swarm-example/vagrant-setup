@@ -56,20 +56,20 @@ Dazu gibts es zwei Möglichkeiten.
 Jenkins instalieren
 + Loggen Sie sich mit `vagrant ssh manager1` auf manager1 ein.
 + Lesen Sie mit `docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword` das initiale Jenkins-Passwort aus.
-+ Öffnen Sie (http://10.1.6.210:8080/)[http://10.1.6.210:8080/]
++ Öffnen Sie [http://10.1.6.210:8080/](http://10.1.6.210:8080/)
 + Geben Sie das ausgelesene initiale Jenkins-Passwort ein.
 + Wählen Sie `Continue` -> `Install suggested plugins`
 + Legen Sie ein Admin-Konto an, z.B. Login: admin, Passwort: admin
 
 Pipeline einrichten
-+ Loggen Sie sich in Jenkins ein (http://10.1.6.210:8080/)[http://10.1.6.210:8080/] (admin/admin).
++ Loggen Sie sich in Jenkins ein [http://10.1.6.210:8080/](http://10.1.6.210:8080/) (admin/admin).
 + Wählen Sie `Element anlegen` -> `Item Name festlegen "newspage"`, `"Pipeline"` auswählen -> OK
 + Wählen Sie unter "Pipeline – Definition": `Pipeline script from SCM`
 + Wählen Sie SCM: `Git`, Repository URL: `https://github.com/kekru-cd-microservice-swarm-example/newspage` -> Speichern
 + Wiederholen Sie diese Schritte für den `commentsservice` mit der Repository URL `https://github.com/kekru-cd-microservice-swarm-example/commentsservice`
 
 Zugangsdaten für Produktiv-Swarm hinzufügen
-+ Loggen Sie sich in Jenkins ein (http://10.1.6.210:8080/)[http://10.1.6.210:8080/] (admin/admin).
++ Loggen Sie sich in Jenkins ein [http://10.1.6.210:8080/](http://10.1.6.210:8080/) (admin/admin).
 + Wählen Sie `Zugangsdaten` -> `Jenkins` (in der Tabelle) -> `Globale Zugangsdaten` -> `Zugangsdaten hinzufügen`
 + Nun müssen drei Dateien hinzugefügt werden (die nächsten Schritte dreimal wiederholen).
 + Wählen Sie jeweils Art: `Secret File`, Gültigkeitsbereich: `Global`
