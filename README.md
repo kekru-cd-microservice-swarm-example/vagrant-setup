@@ -53,7 +53,7 @@ Dazu gibts es zwei Möglichkeiten.
 + Der Login für Jenkins ist `admin`, Passwort `admin`.
 
 ## Alternativ können Sie Jenkins manuell einrichten.  
-Jenkins instalieren
+Jenkins installieren
 + Loggen Sie sich mit `vagrant ssh manager1` auf manager1 ein.
 + Lesen Sie mit `docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword` das initiale Jenkins-Passwort aus.
 + Öffnen Sie [http://10.1.6.210:8080/](http://10.1.6.210:8080/)
