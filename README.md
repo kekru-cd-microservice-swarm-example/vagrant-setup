@@ -31,6 +31,7 @@ Jede Operation kann auch auf eine einzelne VM ausgeführt werden, z.B. `vagrant 
 + `vagrant provision` erneuert die Installationen innerhalb der VMs. Das geht relativ schnell (ca. 2 Minuten) und reicht meistens aus.
 + `vagrant reload --provision` führt erst ein Reload der VMs durch, was u.a. die Netzwerkeinstellungen beinhaltet. Anschließend wird die installierte Software erneuert. (Dauer ca. 3 Minuten)
 + `vagrant destroy` löscht die VMs komplett. Das neu Aufsetzen mit `vagrant up` dauert relativ lange (Ca. 10 bis 15 Minuten).
++ Falls Ihr Rechner nicht genügend Leistung aufweißt, können Sie einzelne Worker herunterfahren, z.B. mittels `vagrant halt worker1`.  
   
 Da die Nutzdaten von Jenkins, der Registry und Redis auf im Vagrant-Shared Folder liegen, in den VMs unter `/vagrant/vm-data`, auf dem Hostrechner im Verzeichnis `vmdata` neben dem `Vagrantfile`, gehen diese beim Neu erstellen der VMs nicht verloren.  
 Wenn Sie diese Daten entfernen möchten, löschen Sie das Verzeichnis `vmdata`, das sich neben dem `Vagrantfile` befindet.
@@ -77,3 +78,12 @@ Zugangsdaten für Produktiv-Swarm hinzufügen
 + Erste Datei: File: `vagrant-setup/vm-data/certs-prod/client-cert.pem`, Id: `prod-client-cert` -> OK
 + Erste Datei: File: `vagrant-setup/vm-data/certs-prod/client-key.pem`, Id: `prod-client-key` -> OK
 
+# Pipelinedurchlauf starten
++ Loggen Sie sich in Jenkins ein [http://10.1.6.210:8080/](http://10.1.6.210:8080/) (admin/admin).
++ Wählen Sie einen Jenkins-Job (newspage oder commentsservice).
++ Wählen Sie jetzt bauen.
++ Sobald die Pipeline am Schritt `Manuelle Tests` angekommen ist, können Sie die Testumgebung über die angezeigte URL im Jenkins-Log, oder in der Pipelinedarstellung ausprobieren
++ Wählen Sie anschließend `Proceed` im Jenkins-Log, oder in der Pipelinedarstellung
++ Sobald `newspage` das erste Mal erfolgreich durchlaufen ist, ist die Beispielanwendung im Produktivsystem über [http://10.1.6.213/newspage/](http://10.1.6.213/newspage/) erreichbar.
++ In der Navigationsleiste finden Sie zwei Links um Testdaten für Newspage und Commentsservice zu erzeugen.
++ Die Produktivumgebung ist nach dem ersten Durchlauf von 
