@@ -86,3 +86,8 @@ Zugangsdaten für Produktiv-Swarm hinzufügen
 + Wählen Sie anschließend `Proceed` im Jenkins-Log, oder in der Pipelinedarstellung
 + Sobald `newspage` das erste Mal erfolgreich durchlaufen ist, ist die Beispielanwendung im Produktivsystem über [http://10.1.6.213/newspage/](http://10.1.6.213/newspage/) erreichbar.
 + In der Navigationsleiste finden Sie zwei Links um Testdaten für Newspage und Commentsservice zu erzeugen.
+
+# Docker und Swarm Visualisierung
++ Unter [http://10.1.6.210:8081/](http://10.1.6.210:8081/) kann der Swarm Visualizer (UI für die Verteilung von Containern im Swarm) für die Testumgebung aufgerufen werden.
++ Unter [http://10.1.6.210:8082/](http://10.1.6.210:8082/) kann für die Testumgebung Portainer aufgerufen werden. Das ist eine UI für Docker, mit der die aktuell laufenden Services und Container betrachtet werden können.
++ Unter [http://10.1.6.213:8081/](http://10.1.6.213:8081/) kann der Swarm Visualizer für die Produktivumgebung aufgerufen werden.
