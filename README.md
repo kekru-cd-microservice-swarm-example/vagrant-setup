@@ -91,3 +91,8 @@ Zugangsdaten für Produktiv-Swarm hinzufügen
 + Unter [http://10.1.6.210:8081/](http://10.1.6.210:8081/) kann der Swarm Visualizer (UI für die Verteilung von Containern im Swarm) für die Testumgebung aufgerufen werden.
 + Unter [http://10.1.6.210:8082/](http://10.1.6.210:8082/) kann für die Testumgebung Portainer aufgerufen werden. Das ist eine UI für Docker, mit der die aktuell laufenden Services und Container betrachtet werden können.
 + Unter [http://10.1.6.213:8081/](http://10.1.6.213:8081/) kann der Swarm Visualizer für die Produktivumgebung aufgerufen werden.
+
+# Authorization Plugin  
+Ich probiere aktuell aus, wie man eigene authorization plugins einbinden kann.  
+[Gist-Eintrag](https://gist.github.com/kekru/b9e4da822514df93e6fdf2f7d3d90d8a)  
+[docker-auth.js](https://github.com/kekru/docker-auth.js)
